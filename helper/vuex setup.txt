@@ -1,0 +1,29 @@
+vuex install
+CMD ------------------------------------------------------------------------------
+npm install vuex@next --save
+src/store/index.js ---------------------------------------------------------------
+import { createStore } from 'vuex'
+
+export default createStore({
+  state: {
+    // Your state properties here
+  },
+  mutations: {
+    // Your mutations here
+  },
+  actions: {
+    // Your actions here
+  },
+  getters: {
+    // Your getters here
+  }
+})
+src/main.js ----------------------------------------------------------------------
+import { createApp } from 'vue'
+import App from './App.vue'
+import store from './store'
+
+const app = createApp(App)
+app.use(store)
+app.mount('#app')
+----------------------------------------------------------------------------------

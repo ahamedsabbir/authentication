@@ -1,0 +1,122 @@
+1. axios install
+CMD ------------------------------------------------------------------------------
+npm install axios
+index.html -----------------------------------------------------------------------
+<head>
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+USES -----------------------------------------------------------------------------
+import axios from 'axios'
+//set token to header
+export default {
+	data() {
+		return {
+		  form: {
+			email: '',
+			password: ''
+		  }
+		}
+	},
+	methods: {
+		async handleSubmit() {
+			try {
+				axios.defaults.baseURL = 'http://localhost/bkash/laravel/public/api'
+				const response = await axios.post('/login', this.form)
+				localStorage.setItem('token', data.token)
+				this.$router.push('/');
+			} catch (error) {
+				alert(error.response.data.message || 'Error adding student')
+				console.error('Error fetching data:', error)
+			}
+		}
+	}
+}
+//get data by token
+export default {
+	data() {
+		return {
+			return {
+				products: {}
+			}
+		}
+	},
+	methods: {
+		async handleSubmit() {
+			try {
+				axios.defaults.baseURL = 'http://localhost/bkash/laravel/public/api'
+				const token = localStorage.getItem('token');
+				axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+				const response = await axios.get('/products')
+				this.products = response.data.products;
+			} catch (error) {
+				alert(error.response.data.message || 'Error adding student')
+				console.error('Error fetching data:', error)
+			}
+		}
+	}
+}
+//get by id by token
+export default {
+	data() {
+		return {
+			return {
+				id: '',
+				products: {}
+			}
+		}
+	},
+	methods: {
+		async handleSubmit() {
+			try {
+				axios.defaults.baseURL = 'http://localhost/bkash/laravel/public/api'
+				const token = localStorage.getItem('token');
+				axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+				const response = await axios.get('/products/single/'+ this.id)
+				this.products = response.data.products;
+			} catch (error) {
+				alert(error.response.data.message || 'Error adding student')
+				console.error('Error fetching data:', error)
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------
+
+2. Laravel api
+app\Http\Controllers\ProductController.php ---------------------------------------
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    public function index()
+    {
+        return response()->json([
+            'products' => Product::all()
+        ]);
+    }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required',
+            'description' => 'required',
+            'image' => 'required',
+        ])
+
+        $product = Product::create($request->all());
+        return response()->json([
+            'message' => 'Product created successfully',
+            'product' => $product
+        ]);
+    }
+}
+routers/api.php ------------------------------------------------------------------
+Route::get("/products", [ProductController::class, 'index']);
+Route::post("/products/store", [ProductController::class, 'store'])->middleware('auth:sanctum');
+Route::post("/products/single/{id}", [ProductController::class, 'single'])->middleware('auth:sanctum');
+----------------------------------------------------------------------------------
