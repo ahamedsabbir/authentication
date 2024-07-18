@@ -1,16 +1,32 @@
 import { createStore } from 'vuex'
 
+const localStoragePlugin = store => {
+  const savedState = localStorage.getItem('vuex-state')
+  if (savedState) {
+    store.replaceState(JSON.parse(savedState))
+  }
+
+  store.subscribe((mutation, state) => {
+    localStorage.setItem('vuex-state', JSON.stringify(state))
+  })
+}
+
 export default createStore({
   state: {
-    // Your state properties here
+    // Your state properties
+    count: 0
   },
   mutations: {
-    // Your mutations here
+    // Your mutations
+    increment(state) {
+      state.count++
+    }
   },
   actions: {
-    // Your actions here
+    // Your actions
   },
   getters: {
-    // Your getters here
-  }
+    // Your getters
+  },
+  plugins: [localStoragePlugin]
 })
