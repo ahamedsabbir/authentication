@@ -3,29 +3,28 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Register</h3>
-                    </div>
+                    <div class="card-header">Register</div>
                     <div class="card-body">
                         <form @submit.prevent="handleSubmit">
                             <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" v-model="username" required>
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" v-model="form.name" required>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="email" v-model="email" required>
+                                <input type="email" class="form-control" id="email" v-model="form.email" required>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" v-model="password" required>
+                                <input type="password" class="form-control" id="password" v-model="form.password"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label for="confirmPassword" class="form-label">Confirm Password</label>
                                 <input type="password" class="form-control" id="confirmPassword"
-                                    v-model="confirmPassword" required>
+                                    v-model="form.confirmPassword" required>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Register</button>
+                            <button type="submit" class="btn btn-primary">Register</button>
                         </form>
                     </div>
                 </div>
@@ -35,29 +34,31 @@
 </template>
 
 <script>
+import axios from 'axios'
+
+
 export default {
-    name: 'Register',
     data() {
         return {
-            username: '',
-            email: '',
-            password: '',
-            confirmPassword: ''
+            form: {},
+            auth: {},
+            token: ''
         }
     },
     methods: {
-        handleSubmit() {
-            // Here you would typically call an API to register the user
-            if (this.password !== this.confirmPassword) {
-                alert("Passwords don't match");
-                return;
+        async handleSubmit() {
+            console.log(this.form)
+            try {
+                axios.defaults.baseURL = this.$config.ApiUrl
+                const response = await axios.post('/register', this.form)
+                this.auth = response.data.user;
+                this.token = response.data.token;
+                alert(response.data.msg || 'Student added successfully')
+                this.$router.push('/');
+            } catch (error) {
+                alert(error.response.data.msg || 'Error adding student')
+                console.error('Error fetching data:', error)
             }
-            console.log('Registration attempted', {
-                username: this.username,
-                email: this.email,
-                password: this.password
-            })
-            // After successful registration, you might want to redirect the user or log them in
         }
     }
 }

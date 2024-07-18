@@ -3,24 +3,19 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Login</h3>
-                    </div>
+                    <div class="card-header">Login</div>
                     <div class="card-body">
                         <form @submit.prevent="handleSubmit">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="email" v-model="email" required>
+                                <input type="email" class="form-control" id="email" v-model="form.email" required>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" v-model="password" required>
+                                <input type="password" class="form-control" id="password" v-model="form.password"
+                                    required>
                             </div>
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="rememberMe" v-model="rememberMe">
-                                <label class="form-check-label" for="rememberMe">Remember me</label>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                            <button type="submit" class="btn btn-primary">Login</button>
                         </form>
                     </div>
                 </div>
@@ -30,24 +25,29 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-    name: 'Login',
     data() {
         return {
-            email: '',
-            password: '',
-            rememberMe: false
+            form: {},
+            auth: {},
+            token: ''
         }
     },
     methods: {
-        handleSubmit() {
-            // Here you would typically call an API to authenticate the user
-            console.log('Login attempted', {
-                email: this.email,
-                password: this.password,
-                rememberMe: this.rememberMe
-            })
-            // After successful login, you might want to redirect the user or update the app state
+        async handleSubmit() {
+            try {
+                axios.defaults.baseURL = this.$config.ApiUrl
+                const response = await axios.post('/login', this.form)
+                this.auth = response.data.user;
+                this.token = response.data.token;
+                alert(response.data.msg || 'Student added successfully');
+                this.$router.push('/');
+            } catch (error) {
+                alert(error.response.data.msg || 'Error adding student')
+                console.error('Error fetching data:', error)
+            }
         }
     }
 }

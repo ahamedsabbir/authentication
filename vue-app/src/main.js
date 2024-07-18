@@ -1,10 +1,11 @@
-import './assets/main.css'
-import store from './store'
-import router from './routers'
+import './assets/main.css';
+import store from './store';
+import router from './routers';
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap/dist/js/bootstrap.js'
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
+import config from './config.js';
 
 import { createApp } from 'vue'
 const options = {
@@ -12,4 +13,6 @@ const options = {
 };
 import App from './App.vue'
 
-createApp(App).use(Toast, options).use(store).use(router).mount('#app')
+const app = createApp(App);
+app.config.globalProperties.$config = config;
+app.use(Toast, options).use(store).use(router).mount('#app')
