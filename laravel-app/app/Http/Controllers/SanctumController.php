@@ -52,7 +52,22 @@ class SanctumController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json([
-            'msg' => 'Logged out'
+            'msg' => "logout"
         ]);
     }
+	public function profilePhoto(Request $request, $id)
+    {
+		$user = User::find($id);
+		if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->storeAs('public/img', $imageName);
+            $imageUrl = "img/" . $imageName;
+        }
+        $user->image = $imageUrl;
+		$user->save();
+		return response()->json([
+            'image' => $imageUrl,
+            'msg' => "image upload"
+        ]);
+	}
 }

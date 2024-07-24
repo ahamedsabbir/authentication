@@ -1,32 +1,49 @@
 import { createStore } from 'vuex'
 
 const localStoragePlugin = store => {
-  const savedState = localStorage.getItem('vuex-state')
-  if (savedState) {
-    store.replaceState(JSON.parse(savedState))
-  }
 
+  const savedState = localStorage.getItem('auth')
+  if (savedState) {
+    store.commit('setAuth', JSON.parse(savedState))
+  }
   store.subscribe((mutation, state) => {
-    localStorage.setItem('vuex-state', JSON.stringify(state))
+    if (mutation.type === 'setAuth' || mutation.type === 'changeName' || mutation.type === 'changeImage') {
+      localStorage.setItem('auth', JSON.stringify(state.auth))
+    }
   })
+
 }
 
 export default createStore({
-  state: {
-    // Your state properties
-    count: 0
+  state() {
+    return {
+      auth: []
+    }
   },
   mutations: {
-    // Your mutations
-    increment(state) {
-      state.count++
+    setAuth(state, data) {
+      state.auth = data;
+    },
+    changeName(state, name){
+      state.auth.name = name;
+    },
+    changeImage(state, image){
+      state.auth.image = image;
     }
   },
   actions: {
-    // Your actions
+    callAuth({ commit }, data) {
+      commit('setAuth', data)
+    },
+    callNameChange({ commit }, name) {
+      commit('changeName', name)
+    },
+    callImageChange({ commit }, image) {
+      commit('changeImage', image)
+    }
   },
   getters: {
-    // Your getters
+    allAuth: state => state.auth,
   },
   plugins: [localStoragePlugin]
 })

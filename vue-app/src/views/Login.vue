@@ -31,8 +31,7 @@ export default {
     data() {
         return {
             form: {},
-            auth: {},
-            token: ''
+            auth: {}
         }
     },
     methods: {
@@ -41,9 +40,10 @@ export default {
                 axios.defaults.baseURL = this.$config.ApiUrl
                 const response = await axios.post('/login', this.form)
                 this.auth = response.data.user;
-                this.token = response.data.token;
+                this.auth.token = response.data.token;
+                this.$store.dispatch('callAuth', this.auth);
                 alert(response.data.msg || 'Student added successfully');
-                this.$router.push('/');
+                this.$router.push('/dashboard');
             } catch (error) {
                 alert(error.response.data.msg || 'Error adding student')
                 console.error('Error fetching data:', error)

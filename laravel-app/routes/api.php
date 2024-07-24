@@ -11,4 +11,7 @@ Route::get('/user', function (Request $request) {
 //auth route
 Route::post("/register", [SanctumController::class, 'register']);
 Route::post("/login", [SanctumController::class, 'login']);
-Route::post("/logout", [SanctumController::class], 'logout')->middleware('auth:sanctum');
+Route::post("/logout", [SanctumController::class, 'logout'])->middleware('auth:sanctum');
+
+//profile
+Route::post("/profile/image/{id}", [SanctumController::class, 'profilePhoto'])->middleware('auth:sanctum');
